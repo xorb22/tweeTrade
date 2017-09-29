@@ -12,14 +12,15 @@ def main():
     sc = SparkContext(conf=conf)
     sc.setLogLevel("WARN")
     # Creating a streaming context with batch interval of 1 sec
-    ssc = StreamingContext(sc, 1)
-    ssc.checkpoint("checkpoint")
+    ssc = StreamingContext(sc, 10)
+    #ssc.checkpoint("checkpoint")
     kstream = KafkaUtils.createDirectStream(
-    ssc, topics = ['stocktopic'], kafkaParams = {"metadata.broker.list": 'localhost:9092'})
+    ssc, topics = ['stock-topic1'], kafkaParams = {"metadata.broker.list": 'localhost:9092'})
     stock = kstream.map(lambda (key, value): json.loads(value))
-    #stock.pprint()
-    value = stock.map(lambda stock1: stock1[u'bidaskvalvol'])
-    value.pprint()
+    stock.pprint()
+    
+    #value = stock.map(lambda stock1: stock1[u'bidaskvalvol'])
+    #value.pprint()
     #text_counts = stock.map(lambda stockQ: (stockQ['bidaskvalvol'],1)).reduceByKey(lambda x,y: x + y)
 
     #text_counts.pprint()
@@ -45,13 +46,15 @@ def sendRecord(record):
 
 def stream(ssc, duration):
     kstream = KafkaUtils.createDirectStream(
-    ssc, topics = ['stocktopic'], kafkaParams = {"metadata.broker.list": 'localhost:9092'})
+    ssc, topics = ['stock-topic1'], kafkaParams = {"metadata.broker.list": 'localhost:9092'})
     stock = kstream.map(lambda (key, value): json.loads(value))
+    #stock = kstream.map(lambda x: json.loads(x[1]))
+
     stock.pprint()
 
-    text_counts = stock.map(lambda stockQ: (stockQ['bidaskvalvol'],1)).reduceByKey(lambda x,y: x + y)
+    #text_counts = stock.map(lambda stockQ: (stockQ['IJT'],1))#.reduceByKey(lambda x,y: x + y)
     
-    text_counts.pprint()
+    #text_counts.pprint()
         
     # Start the computation
     ssc.start() 
