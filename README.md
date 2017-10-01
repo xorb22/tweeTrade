@@ -9,7 +9,7 @@
 
 # Program Description
 
-TweeTrade platform allows user to write and automate conditional execution on stock trading using public sentiment from a web UI. It ingests livestream Twitter firehose and ~3200 NASDAQ stock quotes (simulated) using Kafka, performs linear NLP sentiment analysis certain keywords on Twitter stream and window stock averaging on each ticker using Spark stream processing, and utilizes Apache Cassandra for its database infrastructure. 
+TweeTrade platform allows user to write and automate conditional execution on stock trading using public sentiment from a web UI. It ingests livestream Twitter streaming API and ~3200 NASDAQ stock quotes (simulated) using Kafka, performs linear NLP sentiment analysis on Twitter stream and performs window stock averaging on each ticker using Spark stream processing, and utilizes Apache Cassandra for its database infrastructure. 
 
 # Data Pipeline
 
