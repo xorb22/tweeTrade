@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- <link rel="stylesheet" href="/static/style.css" type="text/css"> -->
+<html lang="en">
+<!-- <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css"/> -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TweeTrade</title>
+  <script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script type="text/javascript" src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='date.js') }}"></script>
+
+</script> 
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+
+<body>
+
+  <div class="container">
+
+
+    <table style="width:100%">
+
+      <tr>
+        <td>
+
+
+         <div id = "container_performance" style = "width: 550px; height: 400px; margin: 0 auto"></div>
+       </td>
+       <td>
+        <div id = "container_MU" style = "width: 550px; height: 400px; margin: 0 auto"></div>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><div id = "container_MU_sentiment" style = "width: 550px; height: 400px; margin: 0 auto"></div>
+      </td>
+      <td>
+        <form action="/submit" method = "POST" id ="userInstr">
+          Add as many logic as you like in new line enclosed in {}:<br>
+          <textarea rows="10" cols="70" name="codeUser" form="userInstr">
+            {"ticker":"MSFT", 
+            "sentiment_term": ["oil", "trump", "tech"], 
+            "sentiment_weight": [1,1,1], 
+            "threshold_action":0.9, 
+            "action":"BUY", 
+            "quantity":5}
+          </textarea>
+          <br>
+
+          <input type="submit" value="Submit">
+        </form> 
+      </td>
+    </tr>
+
+    <tr> 
+      <td>
+        Automated Trade Logic in Action
+        <textarea rows="10" cols="70" name="codeUserCurrent" form="userInstr">
+          {{instrCode}}
+        </textarea>
+      </td>
+
+    </tr>
+
+
+  </table>   
+
+</div>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='stock_portfolio_MU.js') }}"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='stock_portfolio_MU_sentiment.js') }}"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='stock_performance.js') }}"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='stock_portfolio.js')}}"></script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+
+</body>
+
+</html>
