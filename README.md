@@ -27,7 +27,8 @@ The project assumes cassandra service is running with the minimal properties nee
 
 
 # How to Run the Program
-## Dependencies -- install python and python modules: `tweepy`, `pyspark`, `pyspark_cassandra`, kafka (and zookeeper), spark, cassandra.
+## Dependencies
+Install python and python modules: `tweepy`, `pyspark`, `pyspark_cassandra`, kafka (and zookeeper), spark, cassandra.
 ## Run Command (in sequence)
 1. Start Kafka (requires starting zookeeper before Kafka), Spark Streaming and Cassandra Service
 
@@ -44,7 +45,8 @@ export FLASK_APP=./flask/app.py
 flask run
 
 # Limitations and Future Work
-
+Currently, the project sets up data pipeline and infrastructure to perform automated trading -- it creates twitter table with keywords as primary keys, user table with user information, user instruction table, and stock time series. Spark stream processing performs NLP on twitter data and also window average on stock prices for the time frame. However, the spark stream processing for reading user instruction and performing trading logic is not yet implemented and is next step.   
 
 # Contact
 paurakh[at]gmail[dot]com
+
