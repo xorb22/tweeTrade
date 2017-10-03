@@ -23,7 +23,7 @@ def remove_last_line_from_string(s):
     return s[:s.rfind('\n')]
 
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
-tickerSymbols = load_wordlist("./Dataset/tickerSymbols.txt")
+tickerSymbols = load_wordlist("../Dataset/tickerSymbols.txt")
 samplingRate = 5
 #print(len(tickerSymbols))
 #sys.exit()
@@ -39,9 +39,14 @@ while 1:
 	#jsonStock =json.dumps({'insertion_time':datetime.datetime.now().strftime("%Y-%m-%d")})+'\n'+json.dumps({'insertion_time':datetime.datetime.now().strftime("%Y-%m-%d")})
         insert_time =datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	for counter, ticker in enumerate(tickerSymbols):
+		timeMain = int(time.time());
+		stockVal = 100. * np.exp((timeMain % 130)/100.) + 30*np.random.rand()
+		#stockVal = 100+20*np.sin(2*3.14/20*timeMain)+3*np.random.rand()
+		#if (timeMain % 100)
+		
 		jsonStock = json.dumps({'insertion_time':insert_time\
 		      ,'ticker':ticker,\
-			'value': np.random.rand(4).tolist()})
+			'value': [stockVal, stockVal, stockVal, stockVal]})
 		producer.send('stock-topic1',jsonStock)
 	#jsonStock = remove_last_line_from_string(jsonStock)
 	#print jsonStock

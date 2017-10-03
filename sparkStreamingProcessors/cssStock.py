@@ -31,7 +31,7 @@ def load_wordlist(filename):
     return words
 
 def main():
-    tickerSymbols = load_wordlist("./Dataset/tickerSymbols.txt")
+    tickerSymbols = load_wordlist("../Dataset/tickerSymbols.txt")
 
 
     conf = SparkConf().\
