@@ -1,3 +1,6 @@
+/* This python script synthesizes and creates a Kafka producer at the Kafka service that
+is already running in a local server.
+*/
 import datetime
 import time
 import json
@@ -25,36 +28,16 @@ def remove_last_line_from_string(s):
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
 tickerSymbols = load_wordlist("../Dataset/tickerSymbols.txt")
 samplingRate = 5
-#print(len(tickerSymbols))
-#sys.exit()
-
 
 while 1:
-	# producer.send('foobar', b'some_message_bytes')
         val = random.random()*5+100
 	stockQuote = np.random.rand(len(tickerSymbols),4)
-	#print(stockQuote)
-	#sys.exit()
-        #jsonStock = ''
-	#jsonStock =json.dumps({'insertion_time':datetime.datetime.now().strftime("%Y-%m-%d")})+'\n'+json.dumps({'insertion_time':datetime.datetime.now().strftime("%Y-%m-%d")})
         insert_time =datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	for counter, ticker in enumerate(tickerSymbols):
 		timeMain = int(time.time());
-		stockVal = 100. * np.exp((timeMain % 130)/100.) + 30*np.random.rand()
-		#stockVal = 100+20*np.sin(2*3.14/20*timeMain)+3*np.random.rand()
-		#if (timeMain % 100)
-		
+		stockVal = 100. * np.exp((timeMain % 130)/100.) + 30*np.random.rand()		
 		jsonStock = json.dumps({'insertion_time':insert_time\
 		      ,'ticker':ticker,\
 			'value': [stockVal, stockVal, stockVal, stockVal]})
 		producer.send('stock-topic1',jsonStock)
-	#jsonStock = remove_last_line_from_string(jsonStock)
-	#print jsonStock
-	#sys.exit()
-	#dic = dict(zip(tickerSymbols,stockQuote.tolist()))
-        #dic['date'] = datetime.datetime.now().strftime("%m-%d-%Y")
-	#dic['time'] = datetime.datetime.now().strftime("%H:%M:%S")
-	#json_string = json.dumps(dic)
-	#producer.send('stock-topic1',jsonStock)
 	time.sleep(samplingRate)
-#f.close()  # you can omit in most cases as the destructor will call it

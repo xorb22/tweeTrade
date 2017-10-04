@@ -1,3 +1,11 @@
+/*
+This script creats a spark streaming job for Twitter sentiment analysis
+This script should be run with spark streaming job with dependency packages from
+ org.apache.spark:spark-streaming-kafka_2.11:1.6.3,anguenot/pyspark-cassandra:0.5.0
+Run this in the terminal as
+$SPARK_HOME/bin/spark-submit --packages org.apache.spark:spark-streaming-kafka_2.11:1.6.3,anguenot/pyspark-cassandra:0.5.0 cssTwitter.py
+*/
+
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils

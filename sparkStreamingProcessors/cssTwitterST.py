@@ -1,9 +1,16 @@
+/*
+This script creats a spark streaming job for Twitter sentiment analysis and saves keyword table in Cassandra
+This script should be run with spark streaming job with dependency packages from
+ org.apache.spark:spark-streaming-kafka_2.11:1.6.3,anguenot/pyspark-cassandra:0.5.0
+Run this in the terminal as
+$SPARK_HOME/bin/spark-submit --packages org.apache.spark:spark-streaming-kafka_2.11:1.6.3,anguenot/pyspark-cassandra:0.5.0 cssTwitterST.py
+*/
+
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 import operator
 import numpy as np
-#from set import Sets
 import json
 import sys
 from operator import methodcaller
@@ -12,7 +19,6 @@ import pyspark_cassandra
 import pyspark_cassandra.streaming
 from uuid import uuid1
 from pyspark_cassandra import CassandraSparkContext
-
 from pyspark.sql import SQLContext
 import datetime
 
@@ -35,23 +41,17 @@ def load_wordlist(filename):
     return words
 
 def tweetwithSentiment(tweet,pwords, nwords, sterms):
-    
+   
     text = tweet.get(u'text')
     if text is not None:
          words = text.split(" ")
          sentiment = float(np.sign(sum([(1 if word in pwords else 1 if word in nwords else 0)  for word in words])))
          
          stermsBool = [sterm in words for sterm in sterms]
-         # tweet = {"key": {}}
-         # print(type(tweet))
          tweet["sentiment"]=sentiment
          tweet["searchTermBool"]=stermsBool
-         
-         #print(tweet)
          return (tweet)
-         #outJson={"tweet": text, "searchTermBool":stermsBool}
-         #return (outJson)
-    outJson = {"tweet": "blank", "searchTermBool": 0}
+    outJson = {"tweet": '', "searchTermBool": 0}
     return outJson
 
 def searchTermFunction(tweet, sterms): # give set of tuples for each tweet with each element for search term
@@ -60,15 +60,13 @@ def searchTermFunction(tweet, sterms): # give set of tuples for each tweet with 
     	for ind,sterm in enumerate(sterms):
       		if tweet.get(u"searchTermBool")[ind]:
         		searchTermSentimentsLs.append((sterm,tweet.get(u"sentiment")))   	    
-    	#print(searchTermSentimentsLs)
-    #searchTermSentimentsLs.append(("insertion_time","sentiment")))
     return searchTermSentimentsLs
-    #return ("none",0)
+
+
 def main():
     pwords = load_wordlist("./Dataset/positive.txt")
     nwords = load_wordlist("./Dataset/negative.txt")
     sterms = load_wordlist("./Dataset/keyWords.txt")
-    #print(len(sterms))
     conf = SparkConf().\
         setMaster("local[2]").\
         setAppName("TweeStreamer").\
@@ -76,8 +74,9 @@ def main():
         "52.25.173.31, 35.165.251.179, 52.27.187.234, 52.38.246.84")
     sc = CassandraSparkContext(conf=conf)
     sc.setLogLevel("WARN")
-    #sql = SQLContext(sc)
-    # Creating a streaming context with batch interval of 1 sec
+  
+
+    # Creating a streaming context with batch interval of 10 sec
     ssc = StreamingContext(sc, 10)
     ssc.checkpoint("checkpoint")
 
@@ -85,28 +84,23 @@ def main():
     ssc, topics = ['twitter-topic1'],
     kafkaParams = {"metadata.broker.list": 'localhost:9092'})
    
-    #kstream.pprint()
-    #tweets = kstream.map(lambda x: json.loads( x[1].decode('utf-8')))
+    
     tweets = kstream.map(lambda x: json.loads( x[1]))
     tweets.count().map(lambda x:'Tweets in this batch: %s' % x).pprint() 
     tweetsUsentiment = tweets.map(lambda tweet: tweetwithSentiment(tweet, pwords, nwords, sterms))
-    #tweetsUsentiment.pprint()
-    #insert_time = 
+    
+ 
     searchTermUsentiment = tweetsUsentiment.flatMap(lambda tweet: searchTermFunction(tweet, sterms)).reduceByKey(lambda a, b: a+b)
     searchTermUsentiment = searchTermUsentiment.map(lambda (key, value): {"searchterm":"_"+key, "insertion_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), "sentiment": value})
-    searchTermUsentiment.pprint()
-    #rddVal = sc.parallelize([{
-    #	"key": "k",
-    #	"stamp": 1}])
-    #rddVal.pprint()
-    #tweetsUsentiment.saveToCassandra("tweetdb", "tweettable") 
+    #searchTermUsentiment.pprint()
+    
+
     searchTermUsentiment.saveToCassandra("tweetdb","searchtermtable")
     # searchTermSentiment = tweetsUsentiment.map(lambda tweet: searchTermFunction(tweet,sterms))
      
     ssc.start()
     ssc.awaitTerminationOrTimeout(1000)
     ssc.stop(stopGraceFully = True)
-
     
 
 def updateFunction(newValues, runningCount):
