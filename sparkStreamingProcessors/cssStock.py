@@ -1,15 +1,15 @@
-/*
+'''
 This script creats a spark streaming job for stock data
 This script should be run with spark streaming job with dependency packages from 
  org.apache.spark:spark-streaming-kafka_2.11:1.6.3,anguenot/pyspark-cassandra:0.5.0
 Run this in the terminal as 
 $SPARK_HOME/bin/spark-submit --packages org.apache.spark:spark-streaming-kafka_2.11:1.6.3,anguenot/pyspark-cassandra:0.5.0 cssStock.py
-*/
+'''
 
 # Import libraries
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
-	from pyspark.streaming.kafka import KafkaUtils
+from pyspark.streaming.kafka import KafkaUtils
 import operator
 import numpy as np
 import json

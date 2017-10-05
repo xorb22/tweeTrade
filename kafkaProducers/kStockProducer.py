@@ -1,6 +1,5 @@
-/* This python script synthesizes and creates a Kafka producer at the Kafka service that
-is already running in a local server.
-*/
+''' This python script synthesizes and creates a Kafka producer at the Kafka service that
+is already running in a local server.'''
 import datetime
 import time
 import json
@@ -35,7 +34,7 @@ while 1:
         insert_time =datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	for counter, ticker in enumerate(tickerSymbols):
 		timeMain = int(time.time());
-		stockVal = 100. * np.exp((timeMain % 130)/100.) + 30*np.random.rand()		
+		stockVal = 100. * np.exp((timeMain % 300)/100.) + 30*np.random.rand()		
 		jsonStock = json.dumps({'insertion_time':insert_time\
 		      ,'ticker':ticker,\
 			'value': [stockVal, stockVal, stockVal, stockVal]})

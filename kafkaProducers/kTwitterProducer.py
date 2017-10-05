@@ -1,6 +1,6 @@
-/*
+'''
 This script connect to twitter stream API and ingests stream data in topic of Kafka producer
-*/
+'''
 #!/usr/bin/env python
 # import required libraries
 from kafka import SimpleProducer, KafkaClient
